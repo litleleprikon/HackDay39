@@ -34,6 +34,6 @@ def method_dispatch(**table):
     return d
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^auth/', include('auth.urls')),
+    url(r'^api/admin/', include(admin.site.urls)),
+    url(r'^api/auth/', include('auth.urls')),
 ]
