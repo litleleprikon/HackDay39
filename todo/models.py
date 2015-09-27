@@ -9,8 +9,19 @@ class Activity(models.Model):
 
 
 class Link(Activity):
-    url = models.URLField(unique=True)
+    url = models.TextField(unique=True)
 
 
 class Game(Activity):
     name = models.URLField(unique=True)
+
+
+# class ExecutedActivity(models.Model):
+#     activity = models.ForeignKey(Activity)
+#     time = models.DateTimeField(auto_now=True)
+
+
+class LastActivity(models.Model):
+    user = models.ForeignKey(User)
+    activity = models.ForeignKey(Activity, null=True)
+    time = models.DateTimeField(auto_now=True)

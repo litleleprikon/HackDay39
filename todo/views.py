@@ -1,8 +1,10 @@
+from datetime import datetime
+from urllib.parse import urlparse
 from django.contrib.auth.decorators import login_required
 from LIVR import Validator
 import json
 from django.http import HttpResponse
-from todo.models import Link, Game
+from todo.models import Link, Game, LastActivity
 
 
 ADD_LINK_VALIDATOR = Validator.Validator({
@@ -13,6 +15,16 @@ ADD_LINK_VALIDATOR = Validator.Validator({
 ADD_GAME_VALIDATOR = Validator.Validator({
     'name': 'required',
     'limit': ['required', 'integer']
+})
+
+
+VISITED_SITE_VALIDATOR = Validator.Validator({
+    'url': ['required', 'url']
+})
+
+
+OPENED_PROGRAM_VALIDATOR = Validator.Validator({
+    'name': 'required'
 })
 
 
@@ -32,9 +44,9 @@ def add_game_handler(request):
             'url': valid_data['url']
         }))
     else:
-        HttpResponse(
+        return HttpResponse(
             json.dumps({
-                'error': 'Parameters is not valid: {0!s}'.format(ADD_LINK_VALIDATOR.get_errors())
+                'error': 'Parameters is not valid: {0!s}'.format(ADD_GAME_VALIDATOR.get_errors())
             }),
             status=422,
             content_type="application/json")
@@ -44,9 +56,10 @@ def add_game_handler(request):
 def add_link_handler(request):
     parsed_data = json.loads(request.body.decode('utf-8'))
     valid_data = ADD_LINK_VALIDATOR.validate(parsed_data)
+    host = urlparse(valid_data['url']).host
     if valid_data:
         link = Link(
-            url=valid_data['url'],
+            url=host,
             limit=valid_data['limit'],
             user=request.user
         )
@@ -56,7 +69,7 @@ def add_link_handler(request):
             'url': valid_data['url']
         }))
     else:
-        HttpResponse(
+        return HttpResponse(
             json.dumps({
                 'error': 'Parameters is not valid: {0!s}'.format(ADD_LINK_VALIDATOR.get_errors())
             }),
@@ -77,9 +90,73 @@ def get_activities_handler(request):
     } for i in links]
     response_data.extend([{
         'id': i.id,
-        'url': i.url,
+        'url': i.name,
         'limit': i.limit,
         'gone_time': i.gone_time,
         'type': 'game'
     } for i in games])
     return HttpResponse(json.dumps(response_data))
+
+
+@login_required
+def site_visited_handler(request):
+    parsed_data = json.loads(request.body.decode('utf-8'))
+    valid_data = VISITED_SITE_VALIDATOR.validate(parsed_data)
+    if valid_data:
+        host = urlparse(valid_data['url']).hostname
+        try:
+            last_activity = LastActivity.objects.get(user=request.user)
+        except LastActivity.DoesNotExist:
+            last_activity = LastActivity()
+
+        delta_time = datetime.now() - last_activity.time.replace(tzinfo=None)
+        if last_activity.activity is not None:
+            last_activity.activity.gone_time += delta_time.seconds // 60
+            last_activity.activity.save()
+
+        if Link.objects.filter(url=host).exists():
+            last_activity.activity = Link.objects.get(host)
+        else:
+            last_activity.activity = None
+        last_activity.time = datetime.now()
+        last_activity.save()
+        return HttpResponse(json.dumps({"status": "success"}))
+    else:
+        return HttpResponse(
+            json.dumps({
+                'error': 'Parameters is not valid: {0!s}'.format(VISITED_SITE_VALIDATOR.get_errors())
+            }),
+            status=422,
+            content_type="application/json")
+
+
+@login_required
+def program_opened_handler(request):
+    parsed_data = json.loads(request.body.decode('utf-8'))
+    valid_data = OPENED_PROGRAM_VALIDATOR.validate(parsed_data)
+    if valid_data:
+        program_name = valid_data['name']
+        try:
+            last_activity = LastActivity.objects.get(user=request.user)
+        except LastActivity.DoesNotExist:
+            last_activity = LastActivity()
+
+        delta_time = datetime.now() - last_activity.time.replace(tzinfo=None)
+        if last_activity.activity is not None:
+            last_activity.activity.gone_time += delta_time.seconds // 60
+            last_activity.activity.save()
+
+        if Game.objects.filter(url=program_name).exists():
+            last_activity.activity = Game.objects.get(program_name)
+        else:
+            last_activity.activity = None
+        last_activity.time = datetime.now()
+        last_activity.save()
+        return HttpResponse(json.dumps({"status": "success"}))
+    else:
+        return HttpResponse(
+            json.dumps({
+                'error': 'Parameters is not valid: {0!s}'.format(OPENED_PROGRAM_VALIDATOR.get_errors())
+            }),
+            status=422,
+            content_type="application/json")
