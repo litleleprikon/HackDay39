@@ -27,7 +27,7 @@ class LastActivity(models.Model):
 
 
 class LastProgram(LastActivity):
-    activity = models.ForeignKey(Link, null=True)
+    activity = models.ForeignKey(Game, null=True)
 
 
 class LastSite(LastActivity):
