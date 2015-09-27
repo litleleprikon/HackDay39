@@ -100,7 +100,7 @@ def authenticate_handler(request):
         return HttpResponse(json.dumps(
             {'error': 'Incorrect username or password'}),
             status=403)
-    HttpResponse(
+    return HttpResponse(
         json.dumps({
             'error': 'Parameters is not valid: {0!s}'.format(LOGIN_VALIDATOR.get_errors())
         }),
@@ -115,6 +115,3 @@ def logout_handler(request):
     }))
 
 
-def logged_user(func):
-    def wrapper(request):
-        user = re

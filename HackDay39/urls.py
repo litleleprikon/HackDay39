@@ -20,12 +20,6 @@ from django.http import HttpResponseNotAllowed
 
 def method_dispatch(**table):
     def invalid_method(request, *args, **kwargs):
-        # logger.warning('Method Not Allowed (%s): %s', request.method, request.path,
-        #     extra={
-        #         'status_code': 405,
-        #         'request': request
-        #     }
-        # )
         return HttpResponseNotAllowed(table.keys())
 
     def d(request, *args, **kwargs):
@@ -34,6 +28,7 @@ def method_dispatch(**table):
     return d
 
 urlpatterns = [
-    url(r'^api/admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^api/auth/', include('auth.urls')),
+    url(r'^api/', include('todo.urls')),
 ]
