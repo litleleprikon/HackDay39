@@ -107,7 +107,7 @@ def site_visited_handler(request):
         try:
             last_activity = LastActivity.objects.get(user=request.user)
         except LastActivity.DoesNotExist:
-            last_activity = LastActivity()
+            last_activity = LastActivity(time=datetime.now(), user=request.user)
 
         delta_time = datetime.now() - last_activity.time.replace(tzinfo=None)
         if last_activity.activity is not None:
@@ -139,7 +139,7 @@ def program_opened_handler(request):
         try:
             last_activity = LastActivity.objects.get(user=request.user)
         except LastActivity.DoesNotExist:
-            last_activity = LastActivity()
+            last_activity = LastActivity(time=datetime.now(), user=request.user)
 
         delta_time = datetime.now() - last_activity.time.replace(tzinfo=None)
         if last_activity.activity is not None:
