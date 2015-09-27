@@ -41,7 +41,7 @@ def add_game_handler(request):
         game.save()
         return HttpResponse(json.dumps({
             'state': 'success',
-            'url': valid_data['url']
+            'Program name': valid_data['name']
         }))
     else:
         return HttpResponse(
