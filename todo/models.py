@@ -13,7 +13,7 @@ class Link(Activity):
 
 
 class Game(Activity):
-    name = models.URLField(unique=True)
+    name = models.TextField(unique=True)
 
 
 # class ExecutedActivity(models.Model):
@@ -23,14 +23,14 @@ class Game(Activity):
 
 class LastActivity(models.Model):
     user = models.ForeignKey(User)
-    activity = models.ForeignKey(Activity, null=True)
     time = models.DateTimeField(auto_now=True)
 
 
 class LastProgram(LastActivity):
-    pass
+    activity = models.ForeignKey(Link, null=True)
 
 
 class LastSite(LastActivity):
-    pass
+    activity = models.ForeignKey(Link, null=True)
+
 
