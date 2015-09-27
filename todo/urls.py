@@ -11,10 +11,13 @@ urlpatterns = [
     url(r'activities/link/?$',
         method_dispatch(
             POST=views.site_visited_handler)),
+    url(r'activities/program/?$',
+        method_dispatch(
+            POST=views.program_opened_handler)),
     url(r'links/?$',
         method_dispatch(
             POST=views.add_link_handler)),
-    url(r'programs/?$',
+    url(r'games/?$',
         method_dispatch(
             POST=views.add_game_handler
         ))
