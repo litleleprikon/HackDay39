@@ -19,7 +19,7 @@ ADD_GAME_VALIDATOR = Validator.Validator({
 
 
 VISITED_SITE_VALIDATOR = Validator.Validator({
-    'url': ['required', 'url']
+    'url': ['required']
 })
 
 
