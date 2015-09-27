@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'links/?$',
         method_dispatch(
             POST=views.add_link_handler)),
-    url(r'games/?$',
+    url(r'programs/?$',
         method_dispatch(
             POST=views.add_game_handler
         ))
