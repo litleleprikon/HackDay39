@@ -57,7 +57,7 @@ def add_link_handler(request):
     parsed_data = json.loads(request.body.decode('utf-8'))
     valid_data = ADD_LINK_VALIDATOR.validate(parsed_data)
     if valid_data:
-        host = urlparse(valid_data['url']).host
+        host = urlparse(valid_data['url']).hostname
         link = Link(
             url=host,
             limit=valid_data['limit'],
