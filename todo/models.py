@@ -25,3 +25,12 @@ class LastActivity(models.Model):
     user = models.ForeignKey(User)
     activity = models.ForeignKey(Activity, null=True)
     time = models.DateTimeField(auto_now=True)
+
+
+class LastProgram(LastActivity):
+    pass
+
+
+class LastSite(LastActivity):
+    pass
+

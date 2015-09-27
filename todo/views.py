@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from LIVR import Validator
 import json
 from django.http import HttpResponse
-from todo.models import Link, Game, LastActivity
+from todo.models import Link, Game, LastProgram, LastSite
 
 
 ADD_LINK_VALIDATOR = Validator.Validator({
@@ -105,9 +105,9 @@ def site_visited_handler(request):
     if valid_data:
         host = urlparse(valid_data['url']).hostname
         try:
-            last_activity = LastActivity.objects.get(user=request.user)
-        except LastActivity.DoesNotExist:
-            last_activity = LastActivity(time=datetime.now(), user=request.user)
+            last_activity = LastSite.objects.get(user=request.user)
+        except LastSite.DoesNotExist:
+            last_activity = LastSite(time=datetime.now(), user=request.user)
 
         delta_time = datetime.now() - last_activity.time.replace(tzinfo=None)
         if last_activity.activity is not None:
@@ -137,9 +137,9 @@ def program_opened_handler(request):
     if valid_data:
         program_name = valid_data['name']
         try:
-            last_activity = LastActivity.objects.get(user=request.user)
-        except LastActivity.DoesNotExist:
-            last_activity = LastActivity(time=datetime.now(), user=request.user)
+            last_activity = LastProgram.objects.get(user=request.user)
+        except LastProgram.DoesNotExist:
+            last_activity = LastProgram(time=datetime.now(), user=request.user)
 
         delta_time = datetime.now() - last_activity.time.replace(tzinfo=None)
         if last_activity.activity is not None:
