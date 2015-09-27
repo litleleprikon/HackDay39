@@ -5,7 +5,7 @@ from HackDay39.urls import method_dispatch
 __author__ = 'emilsharifullin'
 
 urlpatterns = [
-    url(r'/user/?',
+    url(r'user/?$',
         method_dispatch(
             POST=views.new_user_handler)),
     url(r'',

@@ -29,6 +29,6 @@ def method_dispatch(**table):
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/todo/', include('todo.urls')),
     url(r'^api/auth/', include('auth.urls')),
-    url(r'^api/', include('todo.urls')),
 ]
