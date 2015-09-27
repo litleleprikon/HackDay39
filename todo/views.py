@@ -56,8 +56,8 @@ def add_game_handler(request):
 def add_link_handler(request):
     parsed_data = json.loads(request.body.decode('utf-8'))
     valid_data = ADD_LINK_VALIDATOR.validate(parsed_data)
-    host = urlparse(valid_data['url']).host
     if valid_data:
+        host = urlparse(valid_data['url']).host
         link = Link(
             url=host,
             limit=valid_data['limit'],
@@ -115,7 +115,7 @@ def site_visited_handler(request):
             last_activity.activity.save()
 
         if Link.objects.filter(url=host).exists():
-            last_activity.activity = Link.objects.get(host)
+            last_activity.activity = Link.objects.get(url=host)
         else:
             last_activity.activity = None
         last_activity.time = datetime.now()
@@ -146,8 +146,8 @@ def program_opened_handler(request):
             last_activity.activity.gone_time += delta_time.seconds // 60
             last_activity.activity.save()
 
-        if Game.objects.filter(url=program_name).exists():
-            last_activity.activity = Game.objects.get(program_name)
+        if Game.objects.filter(name=program_name).exists():
+            last_activity.activity = Game.objects.get(name=program_name)
         else:
             last_activity.activity = None
         last_activity.time = datetime.now()
